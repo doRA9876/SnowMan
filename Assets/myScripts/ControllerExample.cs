@@ -4,11 +4,13 @@ public class ControllerExample : MonoBehaviour
 {
   private GameObject controllerR;
   private GameObject cube1;
+  private GameObject prefab;
 
   private void Start()
   {
     controllerR = GameObject.Find("Controller (right)");
     cube1 = GameObject.Find("Cube1");
+    prefab = (GameObject)Resources.Load("Prefabs/Cube");
   }
 
   void Update()
@@ -32,7 +34,8 @@ public class ControllerExample : MonoBehaviour
       Debug.Log(Pos3.x);
       Debug.Log(Pos3.y);
       Debug.Log(Pos3.z);
-      GripCube();
+      // GripCube();
+      Instantiate(prefab, new Vector3(0, 2, 0), Quaternion.identity);
     }
 
     if (device.GetTouchUp(SteamVR_Controller.ButtonMask.Trigger))
