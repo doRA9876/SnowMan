@@ -3,14 +3,13 @@
 public class ControllerExample : MonoBehaviour
 {
   private GameObject controllerR;
-  private GameObject cube1;
-  private GameObject prefab;
-
+  private int objNum;
+  private GameObject terrain;
   private void Start()
   {
     controllerR = GameObject.Find("Controller (right)");
-    cube1 = GameObject.Find("Cube1");
-    prefab = (GameObject)Resources.Load("Prefabs/Cube");
+    terrain = GameObject.Find("Terrain");
+    terrain.GetComponent<Terrain>().drawHeightmap = false;
   }
 
   void Update()
@@ -35,12 +34,13 @@ public class ControllerExample : MonoBehaviour
       Debug.Log(Pos3.y);
       Debug.Log(Pos3.z);
       // GripCube();
-      Instantiate(prefab, new Vector3(0, 2, 0), Quaternion.identity);
+      terrain.GetComponent<Terrain>().drawHeightmap = true;
     }
 
     if (device.GetTouchUp(SteamVR_Controller.ButtonMask.Trigger))
     {
       Debug.Log("トリガーを離した");
+      terrain.GetComponent<Terrain>().drawHeightmap = false;
     }
     if (device.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
     {
@@ -87,6 +87,5 @@ public class ControllerExample : MonoBehaviour
 
   private void GripCube()
   {
-    cube1.transform.position = controllerR.transform.position;
   }
 }
