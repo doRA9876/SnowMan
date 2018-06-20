@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChangeColorOnHit : MonoBehaviour
+public class SnowBall : MonoBehaviour
 {
+  private bool isJoint;
 
   // Use this for initialization
   void Start()
   {
-
+    isJoint = false;
   }
 
   // Update is called once per frame
@@ -19,8 +20,8 @@ public class ChangeColorOnHit : MonoBehaviour
 
   void OnCollisionEnter(Collision collisionObj)
   {
-		if(collisionObj.transform.name == "Floor")
-		{
+    if (collisionObj.transform.name == "Ground" || collisionObj.transform.name == "Controller (right)")
+    {
       return;
     }
 
@@ -29,7 +30,10 @@ public class ChangeColorOnHit : MonoBehaviour
     Vector3 relativePos = GetRelativeCoordinate(thisPos, collisionPos);
 
     Debug.Log(transform.name + ":" + relativePos);
-    JointObj(collisionObj.rigidbody, relativePos);
+    if (!isJoint)
+    {
+      JointObj(collisionObj.rigidbody, relativePos);
+    }
   }
 
   Vector3 GetRelativeCoordinate(Vector3 mainPos, Vector3 sidePos)
@@ -39,8 +43,26 @@ public class ChangeColorOnHit : MonoBehaviour
 
   void JointObj(Rigidbody collisionName, Vector3 relativePos)
   {
-    var hingeJoint = gameObject.AddComponent<HingeJoint>();
+    isJoint = true;
+    var hingeJoint = gameObject.AddComponent<FixedJoint>();
     hingeJoint.connectedBody = collisionName;
     hingeJoint.axis = relativePos;
   }
+
+  // void JointObj(Rigidbody collisionName, Vector3 sidePos)
+  // {
+  //   TransParent(gameObject, collisionName.gameObject);
+  // }
+
+
+  /// <summary>
+  /// Childオブジェクトの親を変更
+  /// </summary>
+  /// <param 親オブジェクト="Parent"></param>
+  /// <param 子オブジェクト="Child"></param>
+  public static void TransParent(GameObject Parent, GameObject Child)
+  {
+    Child.transform.parent = Parent.transform;
+  }
 }
+
