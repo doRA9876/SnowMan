@@ -2,55 +2,96 @@
 
 public class VRControllerScript : MonoBehaviour
 {
-  private GameObject controller, snowBall;
+  private bool isOpenMenu;
+  private GameObject system, controller, snowBall, canvas;
   private SphereCollider controllerCollider;
-  private int objNum;
-
   private SteamVR_Controller.Device device;
   private SteamVR_TrackedObject trackedObject;
+  private Vector2 touchPosition;
+
+  //ctlMode: 0 -> 転がす, 1 -> 掴む
+  private int ctlMode;
   private void Start()
   {
     controller = gameObject;
+    system = GameObject.Find("System");
+    canvas = GameObject.Find("Canvas");
     controllerCollider = controller.GetComponent<SphereCollider>();
-    snowBall = (GameObject)Resources.Load("Prefabs/SnowBall");
+
+    isOpenMenu = false;
+    canvas.SetActive(isOpenMenu);
+    ctlMode = 0;
   }
 
   void Update()
   {
     trackedObject = GetComponent<SteamVR_TrackedObject>();
     device = SteamVR_Controller.Input((int)trackedObject.index);
+    touchPosition = device.GetAxis();
 
     // if (device.GetTouchDown(SteamVR_Controller.ButtonMask.Trigger))
     // {
     //   Debug.Log("トリガーを浅く引いた");
     // }
+
     // if (device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
     // {
     //   Debug.Log("トリガーを深く引いた");
     // }
 
-    // if (device.GetPress(SteamVR_Controller.ButtonMask.Trigger))
-    // {
-    //   Debug.Log("トリガーを握っている");
-    //   var Pos3 = controller.transform.position;
-    //   Debug.Log(Pos3.x);
-    //   Debug.Log(Pos3.y);
-    //   Debug.Log(Pos3.z);
-    // }
+    //トリガーを握っている
+    if (device.GetPress(SteamVR_Controller.ButtonMask.Trigger))
+    {
+      if (isOpenMenu)
+      {
+        system.GetComponent<SystemScript>().CreateSnowBall();
+      }
+    }
 
     // if (device.GetTouchUp(SteamVR_Controller.ButtonMask.Trigger))
     // {
     //   Debug.Log("トリガーを離した");
     // }
-    // if (device.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
-    // {
-    //   Debug.Log("タッチパッドをクリックした");
-    // }
-    if (device.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+
+    //タッチパッドをクリック
+    if (device.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
     {
-      Debug.Log("タッチパッドをクリックしている");
-      Instantiate(snowBall, new Vector3(Random.Range(3.0f, -3.0f), 5, Random.Range(3.0f, -3.0f)), Quaternion.identity);
+      if (touchPosition.y / touchPosition.x > 1 || touchPosition.y / touchPosition.x < -1)
+      {
+        if (touchPosition.y > 0)
+        {
+          //タッチパッド上をクリックした場合の処理
+          Debug.Log("Press UP");
+        }
+        else
+        {
+          //下をクリック
+          isOpenMenu = !isOpenMenu;
+          canvas.SetActive(isOpenMenu);
+          Debug.Log("Press DOWN");
+        }
+      }
+      else
+      {
+        if (touchPosition.x > 0)
+        {
+          //タッチパッド右をクリックした場合の処理
+          ctlMode = 0;
+        }
+        else
+        {
+          //左をクリック 
+          ctlMode = 1;
+        }
+      }
     }
+
+    // //タッチパッドをクリックしている
+    // if (device.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+    // {
+      
+    // }
+
     // if (device.GetPressUp(SteamVR_Controller.ButtonMask.Touchpad))
     // {
     //   Debug.Log("タッチパッドをクリックして離した");
@@ -89,23 +130,36 @@ public class VRControllerScript : MonoBehaviour
   void OnTriggerEnter(Collider collisionObj)
   {
     Debug.Log("接触した");
-    collisionObj.GetComponent<Rigidbody>().useGravity = false;
   }
 
   void OnTriggerStay(Collider collisionObj)
   {
     if (device.GetPress(SteamVR_Controller.ButtonMask.Trigger))
     {
-      //RotateSnow(collisionObj);
-      GripSnow2(collisionObj);
-    }
+      switch (ctlMode)
+      {
+        case 0:
+          RotateSnow(collisionObj);
+          break;
 
+        case 1:
+          GripSnow(collisionObj);
+          break;
+
+        default:
+          break;
+      }
+      collisionObj.GetComponent<Rigidbody>().useGravity = false;
+    }
+    else
+    {
+      collisionObj.GetComponent<Rigidbody>().useGravity = true;
+    }
   }
 
   void OnTriggerExit(Collider collisionObj)
   {
     Debug.Log("離れた");
-    collisionObj.GetComponent<Rigidbody>().useGravity = true;
   }
 
   void RotateSnow(Collider collisionObj)
@@ -126,29 +180,18 @@ public class VRControllerScript : MonoBehaviour
     collisionObj.transform.position = new Vector3(controllerCollider.transform.position.x, colObjY, controllerCollider.transform.position.z) + tmpVec;
   }
 
-  void GripSnow(Collider collisionObj)
-  {
-    var colObjY = collisionObj.transform.position.y;
-    var tmpVec = new Vector3(0, 0, (colObjY * 0.8f) * 1.414f / 2f);
-    tmpVec = controller.transform.rotation * tmpVec;
-    tmpVec = new Vector3(tmpVec.x, 0, tmpVec.z);
-
-    collisionObj.transform.position = new Vector3(controllerCollider.transform.position.x, controllerCollider.transform.position.y /*- colObjY * 1.414f / 2f*/,controllerCollider.transform.position.z) + tmpVec;
-  }
-
   //[MEMO]半径を確実に設定しないと、ぶれが生じる。また、半径は現在のところ規則性が分かっていないため、個別に定数を取るしかない。
   //方向ベクトルと円とコントローラの位置関係によって方程式を導き出し、それに合わせて作った関数。
-  void GripSnow2(Collider collisionObj)
+  void GripSnow(Collider collisionObj)
   {
     var radious = 0.06f;//0.55f * collisionObj.GetComponent<Transform>().localScale.x;
-
-    Debug.Log(radious);
 
     var tmpVec = new Vector3(0, -radious / 1.414f, radious / 1.414f);
     tmpVec = controller.transform.rotation * tmpVec;
     collisionObj.transform.position = controllerCollider.transform.position + tmpVec;
 
-    if(collisionObj.transform.position.y < radious){
+    if (collisionObj.transform.position.y < radious)
+    {
       collisionObj.transform.position = new Vector3(collisionObj.transform.position.x, radious, collisionObj.transform.position.z);
     }
   }
