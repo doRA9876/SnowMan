@@ -30,9 +30,9 @@ public class SystemScript : MonoBehaviour
 
   }
 
-  public void CreateSnowBall()
+  public void CreateSnowBall(Vector3 where)
   {
-    var obj = Instantiate(snowBall, new Vector3(Random.Range(3.0f, -3.0f), 0.06f, Random.Range(3.0f, -3.0f)), Quaternion.identity);
+    var obj = Instantiate(snowBall, where, Quaternion.identity);
 
     obj.GetComponent<SnowBall>().id = snowBallId;
     obj.name = "SnowBall";
