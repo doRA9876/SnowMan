@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class VRControllerScript : MonoBehaviour
+public class VRControllerRight : MonoBehaviour
 {
-  private int tool;
+  private int toolMode;
   private Dictionary<string, bool> flag = new Dictionary<string, bool>();
   private GameObject system, canvas, gripObj, bucket, icepick, scoop, ctrlModel;
   private SphereCollider controllerCollider;
@@ -26,14 +26,15 @@ public class VRControllerScript : MonoBehaviour
     flag.Add("scoop", false);
     flag.Add("icepick", false);
     flag.Add("ctrlModel", true);
-    flag.Add("scooped", false);
+    flag.Add("GroundTouched", false);
 
-    tool = 0;
+    toolMode = 0;
 
     bucket.SetActive(flag["bucket"]);
     scoop.SetActive(flag["scoop"]);
     icepick.SetActive(flag["icepick"]);
     ctrlModel.SetActive(flag["ctrlModel"]);
+    canvas.SetActive(flag["isOpenMenu"]);
   }
 
   void Update()
@@ -65,16 +66,16 @@ public class VRControllerScript : MonoBehaviour
         if (touchPosition.y > 0)
         {
           //タッチパッド上をクリックした場合の処理
-          tool = 0;
-          ChangeTool(tool);
+          toolMode = 0;
+          ChangeTool(toolMode);
         }
         else
         {
           //下をクリック
           flag["isOpenMenu"] = !flag["isOpenMenu"];
           canvas.SetActive(flag["isOpenMenu"]);
-          tool = 2;
-          ChangeTool(tool);
+          toolMode = 2;
+          ChangeTool(toolMode);
         }
       }
       else
@@ -82,14 +83,14 @@ public class VRControllerScript : MonoBehaviour
         if (touchPosition.x > 0)
         {
           //タッチパッド右をクリックした場合の処理
-          tool = 1;
-          ChangeTool(tool);
+          toolMode = 1;
+          ChangeTool(toolMode);
         }
         else
         {
           //左をクリック 
-          tool = 3;
-          ChangeTool(tool);
+          toolMode = 3;
+          ChangeTool(toolMode);
         }
       }
     }
@@ -97,7 +98,10 @@ public class VRControllerScript : MonoBehaviour
 
   void OnTriggerEnter(Collider collisionObj)
   {
-
+    if (collisionObj.gameObject.name == "SnowBall" && toolMode == 3)
+    {
+      ShaveSnow(collisionObj.gameObject);
+    }
   }
 
   void OnTriggerStay(Collider collisionObj)
@@ -115,20 +119,23 @@ public class VRControllerScript : MonoBehaviour
 
     if (collisionObj.gameObject.name == "Ground")
     {
-      if (!flag["scooped"])
+      if (!flag["GroundTouched"])
       {
-        flag["scooped"] = true;
+        flag["GroundTouched"] = true;
       }
     }
   }
 
   void OnTriggerExit(Collider collisionObj)
   {
-    if (collisionObj.gameObject.name == "Ground" && flag["scooped"] && (device != null && device.GetPress(SteamVR_Controller.ButtonMask.Trigger)))
+    if (collisionObj.gameObject.name == "Ground" && (device != null && device.GetPress(SteamVR_Controller.ButtonMask.Trigger)))
     {
-      ScoopSnow();
+      if (flag["GroundTouched"] && toolMode == 0)
+      {
+        ScoopSnow();
+      }
     }
-    flag["scooped"] = false;
+    flag["GroundTouched"] = false;
   }
 
   void GrabObject(GameObject obj)
@@ -199,6 +206,7 @@ public class VRControllerScript : MonoBehaviour
     ctrlModel.SetActive(flag["ctrlModel"]);
   }
 
+  //バケツのみ可能
   void ScoopSnow()
   {
     Debug.Log("Appear SnowBall");
@@ -215,5 +223,13 @@ public class VRControllerScript : MonoBehaviour
         }
       }
     }
+  }
+
+  //アイスピックのみ可能
+  void ShaveSnow(GameObject obj)
+  {
+    Debug.Log("Shve SnowBall");
+
+    Destroy(obj);
   }
 }

@@ -26,8 +26,8 @@ public class SnowBall : MonoBehaviour
       {
         var tmpJoint = gameObject.AddComponent<FixedJoint>();
         tmpJoint.connectedBody = collisionObj.rigidbody;
-        tmpJoint.breakForce = 100;
-        tmpJoint.breakTorque = 5;
+        tmpJoint.breakForce = 1000f;
+        tmpJoint.breakTorque = 1000f;
         if (!JointDictionary.ContainsKey(collisionObj.gameObject.transform.name))
         {
           JointDictionary.Add(collisionObj.gameObject.transform.name, tmpJoint);
