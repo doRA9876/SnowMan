@@ -28,7 +28,7 @@ public class VRControllerRight : MonoBehaviour
     flag.Add("ctrlModel", true);
     flag.Add("GroundTouched", false);
 
-    toolMode = 0;
+    toolMode = 2;
 
     bucket.SetActive(flag["bucket"]);
     scoop.SetActive(flag["scoop"]);
