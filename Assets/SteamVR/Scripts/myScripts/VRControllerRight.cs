@@ -14,11 +14,11 @@ public class VRControllerRight : MonoBehaviour
   private void Start()
   {
     system = GameObject.Find("System");
-    canvas = GameObject.Find("Canvas");
-    bucket = GameObject.Find("bucket");
-    icepick = GameObject.Find("icepick");
-    scoop = GameObject.Find("scoop");
-    ctrlModel = GameObject.Find("Model");
+    canvas = transform.Find("Canvas").gameObject;
+    bucket = transform.Find("bucket").gameObject;
+    icepick = transform.Find("icepick").gameObject;
+    scoop = transform.Find("scoop").gameObject;
+    ctrlModel = transform.Find("Model").gameObject;
     controllerCollider = gameObject.GetComponent<SphereCollider>();
 
     flag.Add("isOpenMenu", false);

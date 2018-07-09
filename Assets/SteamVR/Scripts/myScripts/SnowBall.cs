@@ -22,7 +22,9 @@ public class SnowBall : MonoBehaviour
   {
     if (collisionObj.gameObject.transform.name == "SnowBall")
     {
-      if (!JointDictionary.ContainsKey(collisionObj.gameObject.transform.name) || JointDictionary[collisionObj.gameObject.transform.name] == null)
+      var isExistKey = JointDictionary.ContainsKey(collisionObj.gameObject.transform.name);
+
+      if (!isExistKey || JointDictionary[collisionObj.gameObject.transform.name] == null)
       {
         var tmpJoint = gameObject.AddComponent<FixedJoint>();
         tmpJoint.connectedBody = collisionObj.rigidbody;

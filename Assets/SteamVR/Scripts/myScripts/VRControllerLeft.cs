@@ -5,7 +5,7 @@ public class VRControllerLeft : MonoBehaviour
 {
   private int toolMode;
   private Dictionary<string, bool> flag = new Dictionary<string, bool>();
-  private GameObject ctrlModel, icepick;
+  private GameObject ctrlModel, spray, sprayParticle;
   private SphereCollider controllerCollider;
   private SteamVR_Controller.Device device;
   private SteamVR_TrackedObject trackedObject;
@@ -13,16 +13,19 @@ public class VRControllerLeft : MonoBehaviour
 
   private void Start()
   {
-    ctrlModel = GameObject.Find("Model");
-    icepick = GameObject.Find("icepick");
+    ctrlModel = transform.Find("Model").gameObject;
+    spray = transform.Find("spray").gameObject;
+    sprayParticle = spray.transform.Find("SprayParticle").gameObject;
 
     controllerCollider = gameObject.GetComponent<SphereCollider>();
 
-    flag.Add("icepick", false);
+    flag.Add("spray", false);
     flag.Add("ctrlModel", true);
+    flag.Add("sprayParticle", false);
 
     ctrlModel.SetActive(flag["ctrlModel"]);
-    icepick.SetActive(flag["icepick"]);
+    spray.SetActive(flag["spray"]);
+    sprayParticle.SetActive(flag["sprayParticle"]);
 
     toolMode = 2;
   }
@@ -33,6 +36,13 @@ public class VRControllerLeft : MonoBehaviour
     device = SteamVR_Controller.Input((int)trackedObject.index);
     touchPosition = device.GetAxis();
 
+    //トリガーを握った
+    if (device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+    {
+      flag["sprayParticle"] = true;
+      sprayParticle.SetActive(flag["sprayParticle"]);
+    }
+
     //トリガーを握っている
     if (device.GetPress(SteamVR_Controller.ButtonMask.Trigger))
     {
@@ -42,7 +52,8 @@ public class VRControllerLeft : MonoBehaviour
     //トリガーを離した
     if (device.GetTouchUp(SteamVR_Controller.ButtonMask.Trigger))
     {
-
+      flag["sprayParticle"] = false;
+      sprayParticle.SetActive(flag["sprayParticle"]);
     }
 
     //タッチパッドをクリック
@@ -86,7 +97,7 @@ public class VRControllerLeft : MonoBehaviour
   {
     if (collisionObj.gameObject.name == "SnowBall")
     {
-      if (toolMode == 3)
+      if (toolMode == 3 && flag["sprayParticle"])
       {
         MakeHard(collisionObj.gameObject);
       }
@@ -116,16 +127,16 @@ public class VRControllerLeft : MonoBehaviour
 
       case 3:
         flag["ctrlModel"] = false;
-        flag["icepick"] = true;
+        flag["spray"] = true;
         break;
 
       default:
         flag["ctrlModel"] = true;
-        flag["icepick"] = false;
+        flag["spray"] = false;
         break;
     }
     ctrlModel.SetActive(flag["ctrlModel"]);
-    icepick.SetActive(flag["icepick"]);
+    spray.SetActive(flag["spray"]);
   }
 
   void MakeHard(GameObject obj)
