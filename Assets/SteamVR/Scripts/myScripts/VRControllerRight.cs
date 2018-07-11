@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class VRControllerRight : MonoBehaviour
 {
   private int toolMode;
-  private Dictionary<string, bool> flag = new Dictionary<string, bool>();
-  private GameObject system, canvas, gripObj, bucket, icepick, scoop, ctrlModel;
+  private bool isOpenMenu, groundTouched;
+  private GameObject system, canvas, grabObj, bucket, icepick, scoop, ctrlModel;
   private SphereCollider controllerCollider;
   private SteamVR_Controller.Device device;
   private SteamVR_TrackedObject trackedObject;
@@ -21,20 +22,15 @@ public class VRControllerRight : MonoBehaviour
     ctrlModel = transform.Find("Model").gameObject;
     controllerCollider = gameObject.GetComponent<SphereCollider>();
 
-    flag.Add("isOpenMenu", false);
-    flag.Add("bucket", false);
-    flag.Add("scoop", false);
-    flag.Add("icepick", false);
-    flag.Add("ctrlModel", true);
-    flag.Add("GroundTouched", false);
+    isOpenMenu = false;
+    groundTouched = false;
 
     toolMode = 2;
 
-    bucket.SetActive(flag["bucket"]);
-    scoop.SetActive(flag["scoop"]);
-    icepick.SetActive(flag["icepick"]);
-    ctrlModel.SetActive(flag["ctrlModel"]);
-    canvas.SetActive(flag["isOpenMenu"]);
+    bucket.SetActive(false);
+    scoop.SetActive(false);
+    icepick.SetActive(false);
+    ctrlModel.SetActive(true);
   }
 
   void Update()
@@ -46,7 +42,7 @@ public class VRControllerRight : MonoBehaviour
     //トリガーを握っている
     if (device.GetPress(SteamVR_Controller.ButtonMask.Trigger))
     {
-      if (flag["isOpenMenu"])
+      if (isOpenMenu)
       {
         system.GetComponent<SystemScript>().CreateSnowBall(new Vector3(Random.Range(1.0f, -1.0f), 0.06f, Random.Range(1.0f, -1.0f)));
       }
@@ -72,8 +68,8 @@ public class VRControllerRight : MonoBehaviour
         else
         {
           //下をクリック
-          flag["isOpenMenu"] = !flag["isOpenMenu"];
-          canvas.SetActive(flag["isOpenMenu"]);
+          isOpenMenu = !isOpenMenu;
+          canvas.SetActive(isOpenMenu);
           toolMode = 2;
           ChangeTool(toolMode);
         }
@@ -98,7 +94,8 @@ public class VRControllerRight : MonoBehaviour
 
   void OnTriggerEnter(Collider collisionObj)
   {
-    if (collisionObj.gameObject.name == "SnowBall" && toolMode == 3)
+    string objName = collisionObj.gameObject.name;
+    if ((objName == "SnowBall" || objName == "HardSnowBall") && toolMode == 3)
     {
       ShaveSnow(collisionObj.gameObject);
     }
@@ -108,20 +105,17 @@ public class VRControllerRight : MonoBehaviour
   {
     if (collisionObj.gameObject.name == "SnowBall")
     {
-      if (device != null && device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+      if (device != null && device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) && toolMode == 2)
       {
-        if (gripObj != collisionObj.gameObject)
-        {
-          GrabObject(collisionObj.gameObject);
-        }
+        GrabObject(collisionObj.gameObject);
       }
     }
 
     if (collisionObj.gameObject.name == "Ground")
     {
-      if (!flag["GroundTouched"])
+      if (!groundTouched)
       {
-        flag["GroundTouched"] = true;
+        groundTouched = true;
       }
     }
   }
@@ -130,96 +124,75 @@ public class VRControllerRight : MonoBehaviour
   {
     if (collisionObj.gameObject.name == "Ground" && (device != null && device.GetPress(SteamVR_Controller.ButtonMask.Trigger)))
     {
-      if (flag["GroundTouched"] && toolMode == 0)
+      if (groundTouched && toolMode == 0)
       {
         ScoopSnow();
       }
     }
-    flag["GroundTouched"] = false;
+    groundTouched = false;
   }
 
   void GrabObject(GameObject obj)
   {
-    this.gripObj = obj;
+    if(grabObj != null) return;
 
-    FixedJoint fj = gameObject.GetComponent<FixedJoint>();
-    fj.connectedBody = obj.GetComponent<Rigidbody>();
+    this.grabObj = obj;
+
+    FixedJoint fixedJoint = gameObject.GetComponent<FixedJoint>();
+    fixedJoint.connectedBody = obj.GetComponent<Rigidbody>();
   }
 
   void ReleaseObject()
   {
-    FixedJoint fj = gameObject.GetComponent<FixedJoint>();
-    if (fj != null)
+    FixedJoint fixedJoint = gameObject.GetComponent<FixedJoint>();
+    if (fixedJoint != null)
     {
-      fj.connectedBody = null;
+      fixedJoint.connectedBody = null;
     }
-    this.gripObj = null;
-  }
-
-  void RotateSnow(Collider collisionObj)
-  {
-    var relativePos = collisionObj.gameObject.transform.position - controllerCollider.transform.position;
-    Debug.Log(relativePos);
-
-    var rigidbody = collisionObj.gameObject.GetComponent<Rigidbody>();
-
-    rigidbody.AddForce(relativePos.x * 50, 0, relativePos.z * 50);
+    this.grabObj = null;
   }
 
   //使用する道具を変更
   void ChangeTool(int n)
   {
+    bucket.SetActive(false);
+    scoop.SetActive(false);
+    icepick.SetActive(false);
+    ctrlModel.SetActive(false);
+
     switch (n)
     {
       case 0:
-        flag["bucket"] = true;
-        flag["scoop"] = false;
-        flag["icepick"] = false;
-        flag["ctrlModel"] = false;
+        bucket.SetActive(true);
         break;
 
       case 1:
-        flag["bucket"] = false;
-        flag["scoop"] = true;
-        flag["icepick"] = false;
-        flag["ctrlModel"] = false;
+        scoop.SetActive(true);
         break;
 
       case 3:
-        flag["bucket"] = false;
-        flag["scoop"] = false;
-        flag["icepick"] = true;
-        flag["ctrlModel"] = false;
+        icepick.SetActive(true);
         break;
 
       default:
-        flag["bucket"] = false;
-        flag["scoop"] = false;
-        flag["icepick"] = false;
-        flag["ctrlModel"] = true;
+        ctrlModel.SetActive(true);
         break;
     }
-
-    bucket.SetActive(flag["bucket"]);
-    scoop.SetActive(flag["scoop"]);
-    icepick.SetActive(flag["icepick"]);
-    ctrlModel.SetActive(flag["ctrlModel"]);
   }
 
   //バケツのみ可能
   void ScoopSnow()
   {
-    Debug.Log("Appear SnowBall");
-
     var currentPosition = gameObject.transform.position;
+    var systemScript = system.GetComponent<SystemScript>();
 
-    for (int i = -2; i <= 3; i++)
+    for (int i = -2; i <= 2; i++)
     {
-      for (int j = -2; j <= 3; j++)
+      for (int j = -2; j <= 2; j++)
       {
-        for (int k = -2; k <= 3; k++)
+        for (int k = -2; k <= 2; k++)
         {
-          system.GetComponent<SystemScript>().CreateSnowBall(new Vector3(currentPosition.x + i * 0.08f, currentPosition.y + k * 0.08f, currentPosition.z + j * 0.08f));
+          systemScript.CreateSnowBall(new Vector3(currentPosition.x + i * 0.08f, currentPosition.y + k * 0.08f, currentPosition.z + j * 0.08f));
         }
       }
     }
@@ -228,7 +201,6 @@ public class VRControllerRight : MonoBehaviour
   //アイスピックのみ可能
   void ShaveSnow(GameObject obj)
   {
-    Debug.Log("Shve SnowBall");
 
     Destroy(obj);
   }

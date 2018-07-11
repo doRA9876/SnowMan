@@ -14,8 +14,12 @@
 ・定着材のようなものを吹きかけることによってオブジェクトをその位置に固定する。
 ・固定の仕方はRegidBody内のisKinematicをtrueにすることとする。
 ・左にそれようのスプレーを作成し、それによって吹きかける。
-******************************************/
 
+2018/07/09
+・SnowBallは非常に多く生成されるため、あまり複雑な処理は書かない。（特に毎フレーム処理させるOnCollision()系はご法度）
+・よって、SnowBallには現在では処理を書かないこととする。
+・よく考えて処理を書かないと後で後悔する。
+******************************************/
 
 using System.Collections;
 using System.Collections.Generic;
@@ -23,59 +27,18 @@ using UnityEngine;
 
 public class SystemScript : MonoBehaviour
 {
-
   private GameObject snowBall;
   private int snowBallId;
   // Use this for initialization
   void Start()
   {
     snowBall = (GameObject)Resources.Load("Prefabs/SnowBall");
-    snowBallId = 0;
-  }
-
-  // Update is called once per frame
-  void Update()
-  {
-
   }
 
   public void CreateSnowBall(Vector3 where)
   {
     var obj = Instantiate(snowBall, where, Quaternion.identity);
 
-    obj.GetComponent<SnowBall>().id = snowBallId;
     obj.name = "SnowBall";
-    snowBallId++;
-  }
-
-  public void GroupingSnowBall(GameObject obj1, GameObject obj2)
-  {
-    if (obj1.transform.parent == null && obj2.transform.parent == null)
-    {
-      GameObject newParent = new GameObject("Group");
-      obj1.transform.parent = newParent.transform;
-      obj2.transform.parent = newParent.transform;
-    }
-    else
-    {
-      if (obj1.transform.parent == null)
-      {
-        obj1.transform.parent = obj2.transform.parent;
-      }
-      else
-      {
-        obj2.transform.parent = obj1.transform.parent;
-      }
-    }
-  }
-
-  /// <summary>
-  /// Childオブジェクトの親を変更
-  /// </summary>
-  /// <param 親オブジェクト="Parent"></param>
-  /// <param 子オブジェクト="Child"></param>
-  public static void TransParent(GameObject Parent, GameObject Child)
-  {
-    Child.transform.parent = Parent.transform;
   }
 }

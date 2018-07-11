@@ -4,59 +4,51 @@ using UnityEngine;
 
 public class SnowBall : MonoBehaviour
 {
-  public int id;
-  private GameObject system;
-
-  //保持しているFixedJointを管理するディクショナリ
-  private Dictionary<string, FixedJoint> JointDictionary;
+  private GameObject collision;
+  private SphereCollider sphereCollider;
+  private List<FixedJoint> HingeJointList = new List<FixedJoint> { null, null, null };
 
   // Use this for initialization
-  void Start()
+  IEnumerator Start()
   {
-    system = GameObject.Find("System");
-    JointDictionary = new Dictionary<string, FixedJoint>();
+    collision = transform.Find("Collision").gameObject;
+    sphereCollider = collision.GetComponent<SphereCollider>();
+
+    yield return new WaitForSeconds(5);
+
+    sphereCollider.isTrigger = true;
   }
 
-  //衝突時に呼び出される事前に準備された関数
-  void OnCollisionEnter(Collision collisionObj)
+  void OnTriggerEnter(Collider collisionObj)
   {
-    if (collisionObj.gameObject.transform.name == "SnowBall")
+    string collsionObjName = collisionObj.transform.name;
+    if (collsionObjName == "SnowBall" || collsionObjName == "HardSnowBall")
     {
-      var isExistKey = JointDictionary.ContainsKey(collisionObj.gameObject.transform.name);
+      int emptyIndex = -1;
 
-      if (!isExistKey || JointDictionary[collisionObj.gameObject.transform.name] == null)
+      for (int index = 0; index < HingeJointList.Count; index++)
       {
-        var tmpJoint = gameObject.AddComponent<FixedJoint>();
-        tmpJoint.connectedBody = collisionObj.rigidbody;
-        tmpJoint.breakForce = 1000f;
-        tmpJoint.breakTorque = 1000f;
-        if (!JointDictionary.ContainsKey(collisionObj.gameObject.transform.name))
+        if (HingeJointList[index] == null)
         {
-          JointDictionary.Add(collisionObj.gameObject.transform.name, tmpJoint);
-        }
-        else
-        {
-          JointDictionary[collisionObj.gameObject.transform.name] = tmpJoint;
-        }
-
-        //接続処理はシステム側で行う。idが小さいほうがシステムへメッセージを送る。
-        if (collisionObj.gameObject.GetComponent<SnowBall>().id > this.id)
-        {
-          system.GetComponent<SystemScript>().GroupingSnowBall(gameObject, collisionObj.gameObject);
+          emptyIndex = index;
+          break;
         }
       }
-    }
 
-    if (collisionObj.gameObject.transform.name == "Ground")
-    {
-      Destroy(gameObject);
+      if (emptyIndex == -1) return;
+
+      // Debug.Log("joint!");
+      FixedJoint fixedJoint = gameObject.AddComponent<FixedJoint>();
+      fixedJoint.connectedBody = collisionObj.gameObject.GetComponent<Rigidbody>();
+      fixedJoint.breakForce = 800;
+      fixedJoint.breakTorque = 800;
+      HingeJointList[emptyIndex] = fixedJoint;
     }
   }
 
-  //相対座標を取得するが今は使わない。
-  Vector3 GetRelativeCoordinate(Vector3 mainPos, Vector3 sidePos)
+  void OnJointBreak(float force)
   {
-    return new Vector3(sidePos.x - mainPos.x, sidePos.y - mainPos.y, sidePos.z - mainPos.z);
+    // Debug.Log(force);
   }
 }
 
