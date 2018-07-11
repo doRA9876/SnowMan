@@ -5,9 +5,8 @@ using System.Collections.Generic;
 public class VRControllerRight : MonoBehaviour
 {
   private int toolMode;
-  private bool isOpenMenu, groundTouched;
-  private GameObject system, canvas, grabObj, bucket, icepick, scoop, ctrlModel;
-  private SphereCollider controllerCollider;
+  private bool groundTouched;
+  private GameObject system, grabObj, bucket, icepick, scoop, ctrlModel, canvas;
   private SteamVR_Controller.Device device;
   private SteamVR_TrackedObject trackedObject;
   private Vector2 touchPosition;
@@ -15,14 +14,12 @@ public class VRControllerRight : MonoBehaviour
   private void Start()
   {
     system = GameObject.Find("System");
-    canvas = transform.Find("Canvas").gameObject;
     bucket = transform.Find("bucket").gameObject;
     icepick = transform.Find("icepick").gameObject;
     scoop = transform.Find("scoop").gameObject;
     ctrlModel = transform.Find("Model").gameObject;
-    controllerCollider = gameObject.GetComponent<SphereCollider>();
+    canvas = transform.Find("Canvas").gameObject;
 
-    isOpenMenu = false;
     groundTouched = false;
 
     toolMode = 2;
@@ -31,6 +28,7 @@ public class VRControllerRight : MonoBehaviour
     scoop.SetActive(false);
     icepick.SetActive(false);
     ctrlModel.SetActive(true);
+    canvas.SetActive(false);
   }
 
   void Update()
@@ -39,13 +37,14 @@ public class VRControllerRight : MonoBehaviour
     device = SteamVR_Controller.Input((int)trackedObject.index);
     touchPosition = device.GetAxis();
 
-    //トリガーを握っている
-    if (device.GetPress(SteamVR_Controller.ButtonMask.Trigger))
+    if (device.GetPressDown(SteamVR_Controller.ButtonMask.Grip))
     {
-      if (isOpenMenu)
-      {
-        system.GetComponent<SystemScript>().CreateSnowBall(new Vector3(Random.Range(1.0f, -1.0f), 0.06f, Random.Range(1.0f, -1.0f)));
-      }
+      canvas.SetActive(true);
+    }
+
+    if (device.GetPressUp(SteamVR_Controller.ButtonMask.Grip))
+    {
+      canvas.SetActive(false);
     }
 
     //トリガーを離した
@@ -68,8 +67,6 @@ public class VRControllerRight : MonoBehaviour
         else
         {
           //下をクリック
-          isOpenMenu = !isOpenMenu;
-          canvas.SetActive(isOpenMenu);
           toolMode = 2;
           ChangeTool(toolMode);
         }
@@ -134,7 +131,7 @@ public class VRControllerRight : MonoBehaviour
 
   void GrabObject(GameObject obj)
   {
-    if(grabObj != null) return;
+    if (grabObj != null) return;
 
     this.grabObj = obj;
 

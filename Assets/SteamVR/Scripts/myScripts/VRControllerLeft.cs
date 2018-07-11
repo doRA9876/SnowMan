@@ -39,10 +39,14 @@ public class VRControllerLeft : MonoBehaviour, CtrlLeftInterface
       colorSprayParticle.SetActive(true);
     }
 
-    //トリガーを握っている
-    if (device.GetPress(SteamVR_Controller.ButtonMask.Trigger))
+    if (device.GetPressDown(SteamVR_Controller.ButtonMask.Grip))
     {
+      Debug.Log("Will Open Menu");
+    }
 
+    if (device.GetPressUp(SteamVR_Controller.ButtonMask.Grip))
+    {
+      Debug.Log("Will Close Menu");
     }
 
     //トリガーを離した
@@ -96,7 +100,7 @@ public class VRControllerLeft : MonoBehaviour, CtrlLeftInterface
 
   void OnTriggerStay(Collider collisionObj)
   {
-    
+
   }
 
   void OnTriggerExit(Collider collisionObj)
@@ -139,5 +143,12 @@ public class VRControllerLeft : MonoBehaviour, CtrlLeftInterface
     rigidbody.isKinematic = true;
 
     obj.transform.name = "HardSnowBall";
+  }
+
+  public void ChangeColor(GameObject obj)
+  {
+    Color color = Color.red;
+
+    obj.GetComponent<Renderer>().material.color = color;
   }
 }
