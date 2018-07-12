@@ -1,10 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
-public class VRControllerLeft : MonoBehaviour, CtrlLeftInterface
+public class VRControllerLeft : MonoBehaviour, InterfaceCtrlLeft
 {
   private int toolMode;
-  private GameObject ctrlModel, spray, colorSpray, sprayParticle, colorSprayParticle;
+  private Color drawColor;
+  private GameObject ctrlModel, spray, colorSpray, sprayParticle, colorSprayParticle, colorCanvas, controllerRight, system;
   private SteamVR_Controller.Device device;
   private SteamVR_TrackedObject trackedObject;
   private Vector2 touchPosition;
@@ -16,6 +18,10 @@ public class VRControllerLeft : MonoBehaviour, CtrlLeftInterface
     sprayParticle = spray.transform.Find("SprayParticle").gameObject;
     colorSpray = transform.Find("colorSpray").gameObject;
     colorSprayParticle = colorSpray.transform.Find("SprayParticle").gameObject;
+    colorCanvas = GameObject.Find("ColorCanvas");
+    controllerRight = GameObject.Find("Controller (right)");
+    system = GameObject.Find("System");
+    drawColor = system.GetComponent<ColorCanvasScript>().GetColor();
 
     toolMode = 2;
 
@@ -24,6 +30,7 @@ public class VRControllerLeft : MonoBehaviour, CtrlLeftInterface
     ctrlModel.SetActive(true);
     sprayParticle.SetActive(false);
     colorSprayParticle.SetActive(false);
+    colorCanvas.SetActive(false);
   }
 
   void Update()
@@ -114,10 +121,23 @@ public class VRControllerLeft : MonoBehaviour, CtrlLeftInterface
     ctrlModel.SetActive(false);
     spray.SetActive(false);
     colorSpray.SetActive(false);
+    colorCanvas.SetActive(false);
+    ExecuteEvents.Execute<InterfaceCtrlRight>(
+      target: controllerRight,
+      eventData: null,
+      functor: (reciever, y) => reciever.SwitchCanvasMode(false)
+    );
 
     switch (n)
     {
       case 0:
+        ctrlModel.SetActive(true);
+        colorCanvas.SetActive(true);
+        ExecuteEvents.Execute<InterfaceCtrlRight>(
+          target: controllerRight,
+          eventData: null,
+          functor: (reciever, y) => reciever.SwitchCanvasMode(true)
+        );
         break;
 
       case 1:
@@ -132,12 +152,13 @@ public class VRControllerLeft : MonoBehaviour, CtrlLeftInterface
         ctrlModel.SetActive(true);
         break;
     }
+    
+    drawColor = system.GetComponent<ColorCanvasScript>().GetColor();
   }
 
   //インタフェース実装
   public void MakeHard(GameObject obj)
   {
-    Debug.Log("thank you");
     Rigidbody rigidbody = obj.GetComponent<Rigidbody>();
     rigidbody.useGravity = false;
     rigidbody.isKinematic = true;
@@ -147,8 +168,6 @@ public class VRControllerLeft : MonoBehaviour, CtrlLeftInterface
 
   public void ChangeColor(GameObject obj)
   {
-    Color color = Color.red;
-
-    obj.GetComponent<Renderer>().material.color = color;
+    obj.GetComponent<Renderer>().material.color = drawColor;
   }
 }

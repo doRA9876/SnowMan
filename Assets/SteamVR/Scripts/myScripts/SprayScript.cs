@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class SprayScript : MonoBehaviour
@@ -14,7 +12,7 @@ public class SprayScript : MonoBehaviour
   {
     if (collisionObj.transform.name == "SnowBall")
     {
-      ExecuteEvents.Execute<CtrlLeftInterface>(
+      ExecuteEvents.Execute<InterfaceCtrlLeft>(
         target: controllerLeft,
         eventData: null,
         functor: (reciever, y) => reciever.MakeHard(collisionObj.gameObject)

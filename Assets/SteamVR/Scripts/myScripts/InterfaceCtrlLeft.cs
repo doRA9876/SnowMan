@@ -1,7 +1,7 @@
 ﻿using UnityEngine.EventSystems;
 using UnityEngine;
 
-public interface CtrlLeftInterface : IEventSystemHandler{
+public interface InterfaceCtrlLeft : IEventSystemHandler{
   void MakeHard(GameObject Obj);
   void ChangeColor(GameObject obj);
 }
