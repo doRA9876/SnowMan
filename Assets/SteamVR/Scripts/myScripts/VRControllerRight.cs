@@ -5,51 +5,51 @@ using UnityEngine.EventSystems;
 
 public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
 {
-  private int toolMode;
-  private bool groundTouched, isCanvasMode;
-  private GameObject system, grabObj, bucket, icepick, scoop, ctrlModel, manual;
-  private SteamVR_Controller.Device device;
-  private SteamVR_TrackedObject trackedObject;
-  private Vector2 touchPosition;
+  private int _toolMode;
+  private bool _groundTouched, _isCanvasMode;
+  private GameObject _system, _grabObj, _bucket, _icepick, _scoop, _ctrlModel, _help;
+  private SteamVR_Controller.Device _device;
+  private SteamVR_TrackedObject _trackedObject;
+  private Vector2 _touchPosition;
 
   private void Start()
   {
-    system = GameObject.Find("System");
-    bucket = transform.Find("bucket").gameObject;
-    icepick = transform.Find("icepick").gameObject;
-    scoop = transform.Find("scoop").gameObject;
-    ctrlModel = transform.Find("Model").gameObject;
-    manual = transform.Find("Manual").gameObject;
+    _system = GameObject.Find("System");
+    _bucket = transform.Find("Bucket").gameObject;
+    _icepick = transform.Find("Icepick").gameObject;
+    _scoop = transform.Find("Scoop").gameObject;
+    _ctrlModel = transform.Find("Model").gameObject;
+    _help = transform.Find("Help").gameObject;
 
-    groundTouched = false;
-    isCanvasMode = false;
+    _groundTouched = false;
+    _isCanvasMode = false;
 
-    toolMode = 2;
+    _toolMode = 2;
 
-    bucket.SetActive(false);
-    scoop.SetActive(false);
-    icepick.SetActive(false);
-    ctrlModel.SetActive(true);
-    manual.SetActive(false);
+    _bucket.SetActive(false);
+    _scoop.SetActive(false);
+    _icepick.SetActive(false);
+    _ctrlModel.SetActive(true);
+    _help.SetActive(false);
   }
 
   void Update()
   {
-    trackedObject = GetComponent<SteamVR_TrackedObject>();
-    device = SteamVR_Controller.Input((int)trackedObject.index);
-    touchPosition = device.GetAxis();
+    _trackedObject = GetComponent<SteamVR_TrackedObject>();
+    _device = SteamVR_Controller.Input((int)_trackedObject.index);
+    _touchPosition = _device.GetAxis();
 
-    if (isCanvasMode)
+    if (_isCanvasMode)
     {
-      if (device.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
+      if (_device.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
       {
-        if (touchPosition.y / touchPosition.x > 1 || touchPosition.y / touchPosition.x < -1)
+        if (_touchPosition.y / _touchPosition.x > 1 || _touchPosition.y / _touchPosition.x < -1)
         {
-          if (touchPosition.y > 0)
+          if (_touchPosition.y > 0)
           {
             //タッチパッド上をクリックした場合の処理
             ExecuteEvents.Execute<InterfaceColorCanvas>(
-              target: system,
+              target: _system,
               eventData: null,
               functor: (reciever, y) => reciever.ChangeHead(-1)
             );
@@ -58,7 +58,7 @@ public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
           {
             //下をクリック
             ExecuteEvents.Execute<InterfaceColorCanvas>(
-              target: system,
+              target: _system,
               eventData: null,
               functor: (reciever, y) => reciever.ChangeHead(1)
             );
@@ -66,11 +66,11 @@ public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
         }
         else
         {
-          if (touchPosition.x > 0)
+          if (_touchPosition.x > 0)
           {
             //タッチパッド右をクリックした場合の処理
             ExecuteEvents.Execute<InterfaceColorCanvas>(
-              target: system,
+              target: _system,
               eventData: null,
               functor: (reciever, y) => reciever.ChangeValue(10)
             );
@@ -79,7 +79,7 @@ public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
           {
             //左をクリック 
             ExecuteEvents.Execute<InterfaceColorCanvas>(
-              target: system,
+              target: _system,
               eventData: null,
               functor: (reciever, y) => reciever.ChangeValue(-10)
             );
@@ -89,53 +89,53 @@ public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
     }
     else
     {
-      if (device.GetPressDown(SteamVR_Controller.ButtonMask.Grip))
+      if (_device.GetPressDown(SteamVR_Controller.ButtonMask.Grip))
       {
-        manual.SetActive(true);
+        _help.SetActive(true);
       }
 
-      if (device.GetPressUp(SteamVR_Controller.ButtonMask.Grip))
+      if (_device.GetPressUp(SteamVR_Controller.ButtonMask.Grip))
       {
-        manual.SetActive(false);
+        _help.SetActive(false);
       }
 
       //トリガーを離した
-      if (device.GetTouchUp(SteamVR_Controller.ButtonMask.Trigger))
+      if (_device.GetTouchUp(SteamVR_Controller.ButtonMask.Trigger))
       {
         ReleaseObject();
       }
 
       //タッチパッドをクリック
-      if (device.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
+      if (_device.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
       {
-        if (touchPosition.y / touchPosition.x > 1 || touchPosition.y / touchPosition.x < -1)
+        if (_touchPosition.y / _touchPosition.x > 1 || _touchPosition.y / _touchPosition.x < -1)
         {
-          if (touchPosition.y > 0)
+          if (_touchPosition.y > 0)
           {
             //タッチパッド上をクリックした場合の処理
-            toolMode = 0;
-            ChangeTool(toolMode);
+            _toolMode = 0;
+            ChangeTool(_toolMode);
           }
           else
           {
             //下をクリック
-            toolMode = 2;
-            ChangeTool(toolMode);
+            _toolMode = 2;
+            ChangeTool(_toolMode);
           }
         }
         else
         {
-          if (touchPosition.x > 0)
+          if (_touchPosition.x > 0)
           {
             //タッチパッド右をクリックした場合の処理
-            toolMode = 1;
-            ChangeTool(toolMode);
+            _toolMode = 1;
+            ChangeTool(_toolMode);
           }
           else
           {
             //左をクリック 
-            toolMode = 3;
-            ChangeTool(toolMode);
+            _toolMode = 3;
+            ChangeTool(_toolMode);
           }
         }
       }
@@ -145,7 +145,7 @@ public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
   void OnTriggerEnter(Collider collisionObj)
   {
     string objName = collisionObj.gameObject.name;
-    if ((objName == "SnowBall" || objName == "HardSnowBall") && toolMode == 3)
+    if ((objName == "SnowBall" || objName == "HardSnowBall") && _toolMode == 3)
     {
       ShaveSnow(collisionObj.gameObject);
     }
@@ -155,7 +155,7 @@ public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
   {
     if (collisionObj.gameObject.name == "SnowBall")
     {
-      if (device != null && device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) && toolMode == 2)
+      if (_device != null && _device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) && _toolMode == 2)
       {
         GrabObject(collisionObj.gameObject);
       }
@@ -163,30 +163,30 @@ public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
 
     if (collisionObj.gameObject.name == "Ground")
     {
-      if (!groundTouched)
+      if (!_groundTouched)
       {
-        groundTouched = true;
+        _groundTouched = true;
       }
     }
   }
 
   void OnTriggerExit(Collider collisionObj)
   {
-    if (collisionObj.gameObject.name == "Ground" && (device != null && device.GetPress(SteamVR_Controller.ButtonMask.Trigger)))
+    if (collisionObj.gameObject.name == "Ground" && (_device != null && _device.GetPress(SteamVR_Controller.ButtonMask.Trigger)))
     {
-      if (groundTouched && toolMode == 0)
+      if (_groundTouched && _toolMode == 0)
       {
         ScoopSnow();
       }
     }
-    groundTouched = false;
+    _groundTouched = false;
   }
 
   void GrabObject(GameObject obj)
   {
-    if (grabObj != null) return;
+    if (_grabObj != null) return;
 
-    this.grabObj = obj;
+    this._grabObj = obj;
 
     FixedJoint fixedJoint = gameObject.GetComponent<FixedJoint>();
     fixedJoint.connectedBody = obj.GetComponent<Rigidbody>();
@@ -199,33 +199,33 @@ public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
     {
       fixedJoint.connectedBody = null;
     }
-    this.grabObj = null;
+    this._grabObj = null;
   }
 
   //使用する道具を変更
   void ChangeTool(int n)
   {
-    bucket.SetActive(false);
-    scoop.SetActive(false);
-    icepick.SetActive(false);
-    ctrlModel.SetActive(false);
+    _bucket.SetActive(false);
+    _scoop.SetActive(false);
+    _icepick.SetActive(false);
+    _ctrlModel.SetActive(false);
 
     switch (n)
     {
       case 0:
-        bucket.SetActive(true);
+        _bucket.SetActive(true);
         break;
 
       case 1:
-        scoop.SetActive(true);
+        _scoop.SetActive(true);
         break;
 
       case 3:
-        icepick.SetActive(true);
+        _icepick.SetActive(true);
         break;
 
       default:
-        ctrlModel.SetActive(true);
+        _ctrlModel.SetActive(true);
         break;
     }
   }
@@ -234,7 +234,7 @@ public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
   void ScoopSnow()
   {
     var currentPosition = gameObject.transform.position;
-    var systemScript = system.GetComponent<SystemScript>();
+    var systemScript = _system.GetComponent<SystemScript>();
 
     for (int i = -2; i <= 2; i++)
     {
@@ -256,8 +256,8 @@ public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
 
   public void SwitchCanvasMode(bool flag)
   {
-    isCanvasMode = flag;
-    if (isCanvasMode)
+    _isCanvasMode = flag;
+    if (_isCanvasMode)
     {
       ChangeTool(2);
     }

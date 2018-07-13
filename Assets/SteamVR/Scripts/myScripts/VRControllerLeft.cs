@@ -4,96 +4,96 @@ using UnityEngine.EventSystems;
 
 public class VRControllerLeft : MonoBehaviour, InterfaceCtrlLeft
 {
-  private int toolMode;
-  private Color drawColor;
-  private GameObject ctrlModel, spray, colorSpray, sprayParticle, colorSprayParticle, colorCanvas, controllerRight, system;
-  private SteamVR_Controller.Device device;
-  private SteamVR_TrackedObject trackedObject;
-  private Vector2 touchPosition;
+  private int _toolMode;
+  private Color _drawColor;
+  private GameObject _ctrlModel, _spray, _colorSpray, _sprayParticle, _colorSprayParticle, _colorCanvas, _controllerRight, _system;
+  private SteamVR_Controller.Device _device;
+  private SteamVR_TrackedObject _trackedObject;
+  private Vector2 _touchPosition;
 
   private void Start()
   {
-    ctrlModel = transform.Find("Model").gameObject;
-    spray = transform.Find("spray").gameObject;
-    sprayParticle = spray.transform.Find("SprayParticle").gameObject;
-    colorSpray = transform.Find("colorSpray").gameObject;
-    colorSprayParticle = colorSpray.transform.Find("SprayParticle").gameObject;
-    colorCanvas = GameObject.Find("ColorCanvas");
-    controllerRight = GameObject.Find("Controller (right)");
-    system = GameObject.Find("System");
-    drawColor = system.GetComponent<ColorCanvasScript>().GetColor();
+    _ctrlModel = transform.Find("Model").gameObject;
+    _spray = transform.Find("Spray").gameObject;
+    _sprayParticle = _spray.transform.Find("SprayParticle").gameObject;
+    _colorSpray = transform.Find("ColorSpray").gameObject;
+    _colorSprayParticle = _colorSpray.transform.Find("SprayParticle").gameObject;
+    _colorCanvas = GameObject.Find("ColorCanvas");
+    _controllerRight = GameObject.Find("Controller (right)");
+    _system = GameObject.Find("System");
+    _drawColor = _system.GetComponent<ColorCanvasScript>().GetColor();
 
-    toolMode = 2;
+    _toolMode = 2;
 
-    spray.SetActive(false);
-    colorSpray.SetActive(false);
-    ctrlModel.SetActive(true);
-    sprayParticle.SetActive(false);
-    colorSprayParticle.SetActive(false);
-    colorCanvas.SetActive(false);
+    _spray.SetActive(false);
+    _colorSpray.SetActive(false);
+    _ctrlModel.SetActive(true);
+    _sprayParticle.SetActive(false);
+    _colorSprayParticle.SetActive(false);
+    _colorCanvas.SetActive(false);
   }
 
   void Update()
   {
-    trackedObject = GetComponent<SteamVR_TrackedObject>();
-    device = SteamVR_Controller.Input((int)trackedObject.index);
-    touchPosition = device.GetAxis();
+    _trackedObject = GetComponent<SteamVR_TrackedObject>();
+    _device = SteamVR_Controller.Input((int)_trackedObject.index);
+    _touchPosition = _device.GetAxis();
 
     //トリガーを握った
-    if (device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+    if (_device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
     {
-      sprayParticle.SetActive(true);
-      colorSprayParticle.SetActive(true);
+      _sprayParticle.SetActive(true);
+      _colorSprayParticle.SetActive(true);
     }
 
-    if (device.GetPressDown(SteamVR_Controller.ButtonMask.Grip))
+    if (_device.GetPressDown(SteamVR_Controller.ButtonMask.Grip))
     {
       Debug.Log("Will Open Menu");
     }
 
-    if (device.GetPressUp(SteamVR_Controller.ButtonMask.Grip))
+    if (_device.GetPressUp(SteamVR_Controller.ButtonMask.Grip))
     {
       Debug.Log("Will Close Menu");
     }
 
     //トリガーを離した
-    if (device.GetTouchUp(SteamVR_Controller.ButtonMask.Trigger))
+    if (_device.GetTouchUp(SteamVR_Controller.ButtonMask.Trigger))
     {
-      sprayParticle.SetActive(false);
-      colorSprayParticle.SetActive(false);
+      _sprayParticle.SetActive(false);
+      _colorSprayParticle.SetActive(false);
     }
 
     //タッチパッドをクリック
-    if (device.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
+    if (_device.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
     {
-      if (touchPosition.y / touchPosition.x > 1 || touchPosition.y / touchPosition.x < -1)
+      if (_touchPosition.y / _touchPosition.x > 1 || _touchPosition.y / _touchPosition.x < -1)
       {
-        if (touchPosition.y > 0)
+        if (_touchPosition.y > 0)
         {
           //タッチパッド上をクリックした場合の処理
-          toolMode = 0;
-          ChangeTool(toolMode);
+          _toolMode = 0;
+          ChangeTool(_toolMode);
         }
         else
         {
           //下をクリック
-          toolMode = 2;
-          ChangeTool(toolMode);
+          _toolMode = 2;
+          ChangeTool(_toolMode);
         }
       }
       else
       {
-        if (touchPosition.x > 0)
+        if (_touchPosition.x > 0)
         {
           //タッチパッド右をクリックした場合の処理
-          toolMode = 1;
-          ChangeTool(toolMode);
+          _toolMode = 1;
+          ChangeTool(_toolMode);
         }
         else
         {
           //左をクリック 
-          toolMode = 3;
-          ChangeTool(toolMode);
+          _toolMode = 3;
+          ChangeTool(_toolMode);
 
         }
       }
@@ -118,12 +118,12 @@ public class VRControllerLeft : MonoBehaviour, InterfaceCtrlLeft
   //使用する道具を変更
   void ChangeTool(int n)
   {
-    ctrlModel.SetActive(false);
-    spray.SetActive(false);
-    colorSpray.SetActive(false);
-    colorCanvas.SetActive(false);
+    _ctrlModel.SetActive(false);
+    _spray.SetActive(false);
+    _colorSpray.SetActive(false);
+    _colorCanvas.SetActive(false);
     ExecuteEvents.Execute<InterfaceCtrlRight>(
-      target: controllerRight,
+      target: _controllerRight,
       eventData: null,
       functor: (reciever, y) => reciever.SwitchCanvasMode(false)
     );
@@ -131,29 +131,29 @@ public class VRControllerLeft : MonoBehaviour, InterfaceCtrlLeft
     switch (n)
     {
       case 0:
-        ctrlModel.SetActive(true);
-        colorCanvas.SetActive(true);
+        _ctrlModel.SetActive(true);
+        _colorCanvas.SetActive(true);
         ExecuteEvents.Execute<InterfaceCtrlRight>(
-          target: controllerRight,
+          target: _controllerRight,
           eventData: null,
           functor: (reciever, y) => reciever.SwitchCanvasMode(true)
         );
         break;
 
       case 1:
-        colorSpray.SetActive(true);
+        _colorSpray.SetActive(true);
         break;
 
       case 3:
-        spray.SetActive(true);
+        _spray.SetActive(true);
         break;
 
       default:
-        ctrlModel.SetActive(true);
+        _ctrlModel.SetActive(true);
         break;
     }
     
-    drawColor = system.GetComponent<ColorCanvasScript>().GetColor();
+    _drawColor = _system.GetComponent<ColorCanvasScript>().GetColor();
   }
 
   //インタフェース実装
@@ -168,6 +168,6 @@ public class VRControllerLeft : MonoBehaviour, InterfaceCtrlLeft
 
   public void ChangeColor(GameObject obj)
   {
-    obj.GetComponent<Renderer>().material.color = drawColor;
+    obj.GetComponent<Renderer>().material.color = _drawColor;
   }
 }

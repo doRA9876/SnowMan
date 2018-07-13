@@ -13,7 +13,7 @@ public class ColorCanvasScript : MonoBehaviour, InterfaceColorCanvas
 
   private List<Slider> _slider = new List<Slider>();
   private int _currentSelect;
-  private Image sampleImage;
+  private Image _sampleImage;
 
   // Use this for initialization
   void Start()
@@ -22,7 +22,7 @@ public class ColorCanvasScript : MonoBehaviour, InterfaceColorCanvas
     _slider.Add(GameObject.Find("BlueSlider").GetComponent<Slider>());
     _slider.Add(GameObject.Find("GreenSlider").GetComponent<Slider>());
     _slider.Add(GameObject.Find("AlphaSlider").GetComponent<Slider>());
-    sampleImage = GameObject.Find("SampleImage").GetComponent<Image>();
+    _sampleImage = GameObject.Find("SampleImage").GetComponent<Image>();
 
     _currentSelect = 0;
 
@@ -32,7 +32,7 @@ public class ColorCanvasScript : MonoBehaviour, InterfaceColorCanvas
     }
     _slider[_currentSelect].transform.Find("Text").GetComponent<Text>().color = Color.red;
 
-    sampleImage.color = new Color(_slider[0].value / MAX_SLIDER_VALUE, _slider[1].value / MAX_SLIDER_VALUE, _slider[2].value / MAX_SLIDER_VALUE, _slider[3].value / MAX_SLIDER_VALUE);
+    _sampleImage.color = new Color(_slider[0].value / MAX_SLIDER_VALUE, _slider[1].value / MAX_SLIDER_VALUE, _slider[2].value / MAX_SLIDER_VALUE, _slider[3].value / MAX_SLIDER_VALUE);
   }
 
   public void ChangeHead(int delta)
@@ -52,7 +52,7 @@ public class ColorCanvasScript : MonoBehaviour, InterfaceColorCanvas
   public void ChangeValue(int delta)
   {
     _slider[_currentSelect].value += delta;
-    sampleImage.color = new Color(_slider[0].value / MAX_SLIDER_VALUE, _slider[1].value / MAX_SLIDER_VALUE, _slider[2].value / MAX_SLIDER_VALUE, _slider[3].value / MAX_SLIDER_VALUE);
+    _sampleImage.color = new Color(_slider[0].value / MAX_SLIDER_VALUE, _slider[1].value / MAX_SLIDER_VALUE, _slider[2].value / MAX_SLIDER_VALUE, _slider[3].value / MAX_SLIDER_VALUE);
   }
 
   public Color GetColor()

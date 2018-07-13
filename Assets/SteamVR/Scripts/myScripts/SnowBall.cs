@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class SnowBall : MonoBehaviour
 {
-  private GameObject collision;
-  private SphereCollider sphereCollider;
-  private List<FixedJoint> HingeJointList = new List<FixedJoint> { null, null, null };
+  private GameObject _collision;
+  private SphereCollider _sphereCollider;
+  private List<FixedJoint> _hingeJointList = new List<FixedJoint> { null, null, null };
 
   // Use this for initialization
   IEnumerator Start()
   {
-    collision = transform.Find("Collision").gameObject;
-    sphereCollider = collision.GetComponent<SphereCollider>();
+    _collision = transform.Find("Collision").gameObject;
+    _sphereCollider = _collision.GetComponent<SphereCollider>();
 
     yield return new WaitForSeconds(5);
 
-    sphereCollider.isTrigger = true;
+    _sphereCollider.isTrigger = true;
   }
 
   void OnTriggerEnter(Collider collisionObj)
@@ -26,9 +26,9 @@ public class SnowBall : MonoBehaviour
     {
       int emptyIndex = -1;
 
-      for (int index = 0; index < HingeJointList.Count; index++)
+      for (int index = 0; index < _hingeJointList.Count; index++)
       {
-        if (HingeJointList[index] == null)
+        if (_hingeJointList[index] == null)
         {
           emptyIndex = index;
           break;
@@ -37,12 +37,11 @@ public class SnowBall : MonoBehaviour
 
       if (emptyIndex == -1) return;
 
-      // Debug.Log("joint!");
       FixedJoint fixedJoint = gameObject.AddComponent<FixedJoint>();
       fixedJoint.connectedBody = collisionObj.gameObject.GetComponent<Rigidbody>();
       fixedJoint.breakForce = 800;
       fixedJoint.breakTorque = 800;
-      HingeJointList[emptyIndex] = fixedJoint;
+      _hingeJointList[emptyIndex] = fixedJoint;
     }
   }
 

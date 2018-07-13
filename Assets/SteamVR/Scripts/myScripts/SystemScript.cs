@@ -27,18 +27,18 @@ using UnityEngine;
 
 public class SystemScript : MonoBehaviour
 {
-  private GameObject snowBall;
-  private int snowBallId;
+  private GameObject _snowBall;
+
   // Use this for initialization
   void Start()
   {
-    snowBall = (GameObject)Resources.Load("Prefabs/SnowBall");
+    _snowBall = (GameObject)Resources.Load("Prefabs/SnowBall");
   }
 
   public void CreateSnowBall(Vector3 where)
   {
-    var obj = Instantiate(snowBall, where, Quaternion.identity);
-
+    var obj = Instantiate(_snowBall, where, Quaternion.identity);
     obj.name = "SnowBall";
+    obj.GetComponent<Rigidbody>().sleepThreshold = 3;
   }
 }
