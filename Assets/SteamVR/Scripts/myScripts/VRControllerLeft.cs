@@ -6,7 +6,7 @@ public class VRControllerLeft : MonoBehaviour, InterfaceCtrlLeft
 {
   private int _toolMode;
   private Color _drawColor;
-  private GameObject _ctrlModel, _spray, _colorSpray, _sprayParticle, _colorSprayParticle, _colorCanvas, _controllerRight, _system;
+  private GameObject _ctrlModel, _spray, _scoop, _colorSpray, _sprayParticle, _colorSprayParticle, _colorCanvas, _controllerRight, _system, _help;
   private SteamVR_Controller.Device _device;
   private SteamVR_TrackedObject _trackedObject;
   private Vector2 _touchPosition;
@@ -15,22 +15,26 @@ public class VRControllerLeft : MonoBehaviour, InterfaceCtrlLeft
   {
     _ctrlModel = transform.Find("Model").gameObject;
     _spray = transform.Find("Spray").gameObject;
+    _scoop = transform.Find("Scoop").gameObject;
     _sprayParticle = _spray.transform.Find("SprayParticle").gameObject;
     _colorSpray = transform.Find("ColorSpray").gameObject;
     _colorSprayParticle = _colorSpray.transform.Find("SprayParticle").gameObject;
     _colorCanvas = GameObject.Find("ColorCanvas");
     _controllerRight = GameObject.Find("Controller (right)");
     _system = GameObject.Find("System");
+    _help = transform.Find("Help").gameObject;
     _drawColor = _system.GetComponent<ColorCanvasScript>().GetColor();
 
     _toolMode = 2;
 
     _spray.SetActive(false);
+    _scoop.SetActive(false);
     _colorSpray.SetActive(false);
     _ctrlModel.SetActive(true);
     _sprayParticle.SetActive(false);
     _colorSprayParticle.SetActive(false);
     _colorCanvas.SetActive(false);
+    _help.SetActive(false);
   }
 
   void Update()
@@ -48,12 +52,12 @@ public class VRControllerLeft : MonoBehaviour, InterfaceCtrlLeft
 
     if (_device.GetPressDown(SteamVR_Controller.ButtonMask.Grip))
     {
-      Debug.Log("Will Open Menu");
+      _help.SetActive(true);
     }
 
     if (_device.GetPressUp(SteamVR_Controller.ButtonMask.Grip))
     {
-      Debug.Log("Will Close Menu");
+      _help.SetActive(false);
     }
 
     //トリガーを離した
@@ -120,6 +124,7 @@ public class VRControllerLeft : MonoBehaviour, InterfaceCtrlLeft
   {
     _ctrlModel.SetActive(false);
     _spray.SetActive(false);
+    _scoop.SetActive(false);
     _colorSpray.SetActive(false);
     _colorCanvas.SetActive(false);
     ExecuteEvents.Execute<InterfaceCtrlRight>(
@@ -148,6 +153,10 @@ public class VRControllerLeft : MonoBehaviour, InterfaceCtrlLeft
         _spray.SetActive(true);
         break;
 
+      case 4:
+        _scoop.SetActive(true);
+        break;
+
       default:
         _ctrlModel.SetActive(true);
         break;
@@ -169,5 +178,9 @@ public class VRControllerLeft : MonoBehaviour, InterfaceCtrlLeft
   public void ChangeColor(GameObject obj)
   {
     obj.GetComponent<Renderer>().material.color = _drawColor;
+  }
+
+  public void ActiveScoop(){
+    ChangeTool(4);
   }
 }

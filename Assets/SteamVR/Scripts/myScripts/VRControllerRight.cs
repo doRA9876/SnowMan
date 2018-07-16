@@ -7,7 +7,7 @@ public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
 {
   private int _toolMode;
   private bool _groundTouched, _isCanvasMode;
-  private GameObject _system, _grabObj, _bucket, _icepick, _scoop, _ctrlModel, _help;
+  private GameObject _system, _grabObj, _bucket, _icepick, _scoop, _ctrlModel, _help, _controllerLeft;
   private SteamVR_Controller.Device _device;
   private SteamVR_TrackedObject _trackedObject;
   private Vector2 _touchPosition;
@@ -20,6 +20,7 @@ public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
     _scoop = transform.Find("Scoop").gameObject;
     _ctrlModel = transform.Find("Model").gameObject;
     _help = transform.Find("Help").gameObject;
+    _controllerLeft = GameObject.Find("Controller (left)");
 
     _groundTouched = false;
     _isCanvasMode = false;
@@ -218,6 +219,11 @@ public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
 
       case 1:
         _scoop.SetActive(true);
+        ExecuteEvents.Execute<InterfaceCtrlLeft>(
+          target: _controllerLeft,
+          eventData: null,
+          functor: (reciever, y) => reciever.ActiveScoop()
+        );
         break;
 
       case 3:

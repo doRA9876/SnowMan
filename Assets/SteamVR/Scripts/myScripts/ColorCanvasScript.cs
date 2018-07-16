@@ -21,7 +21,6 @@ public class ColorCanvasScript : MonoBehaviour, InterfaceColorCanvas
     _slider.Add(GameObject.Find("RedSlider").GetComponent<Slider>());
     _slider.Add(GameObject.Find("BlueSlider").GetComponent<Slider>());
     _slider.Add(GameObject.Find("GreenSlider").GetComponent<Slider>());
-    _slider.Add(GameObject.Find("AlphaSlider").GetComponent<Slider>());
     _sampleImage = GameObject.Find("SampleImage").GetComponent<Image>();
 
     _currentSelect = 0;
@@ -32,7 +31,7 @@ public class ColorCanvasScript : MonoBehaviour, InterfaceColorCanvas
     }
     _slider[_currentSelect].transform.Find("Text").GetComponent<Text>().color = Color.red;
 
-    _sampleImage.color = new Color(_slider[0].value / MAX_SLIDER_VALUE, _slider[1].value / MAX_SLIDER_VALUE, _slider[2].value / MAX_SLIDER_VALUE, _slider[3].value / MAX_SLIDER_VALUE);
+    _sampleImage.color = new Color(_slider[0].value / MAX_SLIDER_VALUE, _slider[1].value / MAX_SLIDER_VALUE, _slider[2].value / MAX_SLIDER_VALUE);
   }
 
   public void ChangeHead(int delta)
@@ -43,8 +42,8 @@ public class ColorCanvasScript : MonoBehaviour, InterfaceColorCanvas
 
     _currentSelect += delta;
 
-    if (_currentSelect > 3) _currentSelect = 0;
-    if (_currentSelect < 0) _currentSelect = 3;
+    if (_currentSelect > _slider.Count - 1) _currentSelect = 0;
+    if (_currentSelect < 0) _currentSelect = _slider.Count - 1;
 
     _slider[_currentSelect].transform.Find("Text").GetComponent<Text>().color = Color.red;
   }
@@ -52,11 +51,11 @@ public class ColorCanvasScript : MonoBehaviour, InterfaceColorCanvas
   public void ChangeValue(int delta)
   {
     _slider[_currentSelect].value += delta;
-    _sampleImage.color = new Color(_slider[0].value / MAX_SLIDER_VALUE, _slider[1].value / MAX_SLIDER_VALUE, _slider[2].value / MAX_SLIDER_VALUE, _slider[3].value / MAX_SLIDER_VALUE);
+    _sampleImage.color = new Color(_slider[0].value / MAX_SLIDER_VALUE, _slider[1].value / MAX_SLIDER_VALUE, _slider[2].value / MAX_SLIDER_VALUE);
   }
 
   public Color GetColor()
   {
-    return new Color(_slider[0].value / MAX_SLIDER_VALUE, _slider[1].value / MAX_SLIDER_VALUE, _slider[2].value / MAX_SLIDER_VALUE, _slider[3].value / MAX_SLIDER_VALUE);
+    return new Color(_slider[0].value / MAX_SLIDER_VALUE, _slider[1].value / MAX_SLIDER_VALUE, _slider[2].value / MAX_SLIDER_VALUE);
   }
 }
