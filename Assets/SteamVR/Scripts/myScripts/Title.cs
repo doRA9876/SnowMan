@@ -56,7 +56,7 @@ public class Title : MonoBehaviour
 
       case 2:
         _bgm.SetActive(true);
-        _navigationText.GetComponent<Text>().text = "移動します。";
+        _navigationText.GetComponent<Text>().text = "移動します。\n右手のトリガーを引いてください。";
         _navigationText.SetActive(false);
         _titleText.SetActive(true);
         _seqNum++;

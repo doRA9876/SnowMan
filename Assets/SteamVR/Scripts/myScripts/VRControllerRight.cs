@@ -52,7 +52,7 @@ public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
             ExecuteEvents.Execute<InterfaceColorCanvas>(
               target: _system,
               eventData: null,
-              functor: (reciever, y) => reciever.ChangeHead(-1)
+              functor: (reciever, y) => reciever.ChangeHead(1)
             );
           }
           else
@@ -61,7 +61,7 @@ public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
             ExecuteEvents.Execute<InterfaceColorCanvas>(
               target: _system,
               eventData: null,
-              functor: (reciever, y) => reciever.ChangeHead(1)
+              functor: (reciever, y) => reciever.ChangeHead(-1)
             );
 }
         }
