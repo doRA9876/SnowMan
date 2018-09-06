@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
-public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
+public sealed class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
 {
   private int _toolMode;
   private bool _groundTouched, _isCanvasMode;
@@ -63,7 +63,7 @@ public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
               eventData: null,
               functor: (reciever, y) => reciever.ChangeHead(-1)
             );
-}
+          }
         }
         else
         {
@@ -109,6 +109,10 @@ public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
       //タッチパッドをクリック
       if (_device.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
       {
+        _toolMode = GetTouchPositionOfGamePad();
+        ChangeTool(_toolMode);
+
+        /*
         if (_touchPosition.y / _touchPosition.x > 1 || _touchPosition.y / _touchPosition.x < -1)
         {
           if (_touchPosition.y > 0)
@@ -139,6 +143,7 @@ public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
             ChangeTool(_toolMode);
           }
         }
+        */
       }
     }
   }
@@ -173,7 +178,7 @@ public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
 
   void OnTriggerExit(Collider collisionObj)
   {
-    if (collisionObj.gameObject.name == "Ground" && (_device != null && _device.GetPress(SteamVR_Controller.ButtonMask.Trigger)))
+    if (collisionObj.gameObject.name == "Ground" && _device != null)
     {
       if (_groundTouched && _toolMode == 0)
       {
@@ -266,6 +271,44 @@ public class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
     if (_isCanvasMode)
     {
       ChangeTool(2);
+    }
+  }
+
+  /************************************************
+  Return an integer depending on where you clicked
+
+                  up:0
+            left:3      right:1
+                  down:2
+
+  ************************************************/
+  public int GetTouchPositionOfGamePad()
+  {
+    if (_touchPosition.y / _touchPosition.x > 1 || _touchPosition.y / _touchPosition.x < -1)
+    {
+      if (_touchPosition.y > 0)
+      {
+        //Clicked Up
+        return 0;
+      }
+      else
+      {
+        //Clicked Down
+        return 2;
+      }
+    }
+    else
+    {
+      if (_touchPosition.x > 0)
+      {
+        //Clickted Right
+        return 1;
+      }
+      else
+      {
+        //Clickted Left 
+        return 3;
+      }
     }
   }
 }

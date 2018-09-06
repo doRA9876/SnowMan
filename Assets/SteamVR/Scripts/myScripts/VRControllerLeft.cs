@@ -104,20 +104,7 @@ public class VRControllerLeft : MonoBehaviour, InterfaceCtrlLeft
     }
   }
 
-  void OnTriggerEnter(Collider collisionObj)
-  {
-
-  }
-
-  void OnTriggerStay(Collider collisionObj)
-  {
-
-  }
-
-  void OnTriggerExit(Collider collisionObj)
-  {
-
-  }
+  
 
   //使用する道具を変更
   void ChangeTool(int n)
