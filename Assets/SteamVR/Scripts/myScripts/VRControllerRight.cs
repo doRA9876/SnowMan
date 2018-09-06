@@ -7,20 +7,18 @@ public sealed class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
 {
   private int _toolMode;
   private bool _groundTouched, _isCanvasMode;
-  private GameObject _system, _grabObj, _bucket, _icepick, _scoop, _ctrlModel, _help, _controllerLeft;
+  private GameObject _grabObj;
+  public GameObject _system, _bucket, _icepick, _scoop, _ctrlModel, _help, _controllerLeft;
   private SteamVR_Controller.Device _device;
   private SteamVR_TrackedObject _trackedObject;
   private Vector2 _touchPosition;
 
   private void Start()
   {
-    _system = GameObject.Find("System");
-    _bucket = transform.Find("Bucket").gameObject;
-    _icepick = transform.Find("Icepick").gameObject;
-    _scoop = transform.Find("Scoop").gameObject;
-    _ctrlModel = transform.Find("Model").gameObject;
-    _help = transform.Find("Help").gameObject;
-    _controllerLeft = GameObject.Find("Controller (left)");
+    if (_system == null || _bucket == null || _icepick == null || _scoop == null || _ctrlModel == null || _help == null || _controllerLeft == null)
+    {
+      Debug.LogError("There are unattached variables!");
+    }
 
     _groundTouched = false;
     _isCanvasMode = false;
@@ -44,6 +42,48 @@ public sealed class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
     {
       if (_device.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
       {
+        switch (GetTouchPositionOfGamePad())
+        {
+          case 0:
+            //When clicking on the top
+            ExecuteEvents.Execute<InterfaceColorCanvas>(
+              target: _system,
+              eventData: null,
+              functor: (reciever, y) => reciever.ChangeHead(1)
+            );
+            break;
+
+          case 2:
+            //When clicking on the under
+            ExecuteEvents.Execute<InterfaceColorCanvas>(
+              target: _system,
+              eventData: null,
+              functor: (reciever, y) => reciever.ChangeHead(-1)
+            );
+            break;
+
+          case 1:
+            //When clicking on the ringt
+            ExecuteEvents.Execute<InterfaceColorCanvas>(
+              target: _system,
+              eventData: null,
+              functor: (reciever, y) => reciever.ChangeValue(10)
+            );
+            break;
+
+          case 3:
+            //When clicking on the left
+            ExecuteEvents.Execute<InterfaceColorCanvas>(
+              target: _system,
+              eventData: null,
+              functor: (reciever, y) => reciever.ChangeValue(-10)
+            );
+            break;
+          default:
+            break;
+        }
+
+        /*
         if (_touchPosition.y / _touchPosition.x > 1 || _touchPosition.y / _touchPosition.x < -1)
         {
           if (_touchPosition.y > 0)
@@ -86,6 +126,7 @@ public sealed class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
             );
           }
         }
+        */
       }
     }
     else
@@ -111,39 +152,6 @@ public sealed class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
       {
         _toolMode = GetTouchPositionOfGamePad();
         ChangeTool(_toolMode);
-
-        /*
-        if (_touchPosition.y / _touchPosition.x > 1 || _touchPosition.y / _touchPosition.x < -1)
-        {
-          if (_touchPosition.y > 0)
-          {
-            //タッチパッド上をクリックした場合の処理
-            _toolMode = 0;
-            ChangeTool(_toolMode);
-          }
-          else
-          {
-            //下をクリック
-            _toolMode = 2;
-            ChangeTool(_toolMode);
-          }
-        }
-        else
-        {
-          if (_touchPosition.x > 0)
-          {
-            //タッチパッド右をクリックした場合の処理
-            _toolMode = 1;
-            ChangeTool(_toolMode);
-          }
-          else
-          {
-            //左をクリック 
-            _toolMode = 3;
-            ChangeTool(_toolMode);
-          }
-        }
-        */
       }
     }
   }
@@ -161,7 +169,7 @@ public sealed class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
   {
     if (collisionObj.gameObject.name == "SnowBall")
     {
-      if (_device != null && _device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) && _toolMode == 2)
+      if (_device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) && _toolMode == 2)
       {
         GrabObject(collisionObj.gameObject);
       }
@@ -178,7 +186,7 @@ public sealed class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
 
   void OnTriggerExit(Collider collisionObj)
   {
-    if (collisionObj.gameObject.name == "Ground" && _device != null)
+    if (collisionObj.gameObject.name == "Ground")
     {
       if (_groundTouched && _toolMode == 0)
       {
