@@ -82,51 +82,6 @@ public sealed class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
           default:
             break;
         }
-
-        /*
-        if (_touchPosition.y / _touchPosition.x > 1 || _touchPosition.y / _touchPosition.x < -1)
-        {
-          if (_touchPosition.y > 0)
-          {
-            //タッチパッド上をクリックした場合の処理
-            ExecuteEvents.Execute<InterfaceColorCanvas>(
-              target: _system,
-              eventData: null,
-              functor: (reciever, y) => reciever.ChangeHead(1)
-            );
-          }
-          else
-          {
-            //下をクリック
-            ExecuteEvents.Execute<InterfaceColorCanvas>(
-              target: _system,
-              eventData: null,
-              functor: (reciever, y) => reciever.ChangeHead(-1)
-            );
-          }
-        }
-        else
-        {
-          if (_touchPosition.x > 0)
-          {
-            //タッチパッド右をクリックした場合の処理
-            ExecuteEvents.Execute<InterfaceColorCanvas>(
-              target: _system,
-              eventData: null,
-              functor: (reciever, y) => reciever.ChangeValue(10)
-            );
-          }
-          else
-          {
-            //左をクリック 
-            ExecuteEvents.Execute<InterfaceColorCanvas>(
-              target: _system,
-              eventData: null,
-              functor: (reciever, y) => reciever.ChangeValue(-10)
-            );
-          }
-        }
-        */
       }
     }
     else
