@@ -29,6 +29,7 @@ public sealed class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
     _scoop.SetActive(false);
     _icepick.SetActive(false);
     _ctrlModel.SetActive(true);
+
   }
 
   void Update()
@@ -96,6 +97,10 @@ public sealed class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
       {
         _toolMode = GetTouchPositionOfGamePad();
         ChangeTool(_toolMode);
+      }
+
+      if(_device.GetPressDown(SteamVR_Controller.ButtonMask.Grip)){
+        InstantiateGrid();
       }
     }
   }
@@ -262,5 +267,12 @@ public sealed class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
         return 3;
       }
     }
+  }
+
+  void InstantiateGrid(){
+    var systemScript = _system.GetComponent<SystemScript>();
+    var instantiatePos = GameObject.Find("Board").transform.position;
+
+    systemScript.CreateGrid(instantiatePos);
   }
 }
