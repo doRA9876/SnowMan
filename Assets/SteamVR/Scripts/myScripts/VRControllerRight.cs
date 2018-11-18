@@ -8,14 +8,14 @@ public sealed class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
   private int _toolMode;
   private bool _groundTouched, _isCanvasMode;
   private GameObject _grabObj;
-  public GameObject _system, _bucket, _icepick, _scoop, _ctrlModel, _help, _controllerLeft;
+  public GameObject _system, _bucket, _icepick, _scoop, _ctrlModel, _controllerLeft;
   private SteamVR_Controller.Device _device;
   private SteamVR_TrackedObject _trackedObject;
   private Vector2 _touchPosition;
 
   private void Start()
   {
-    if (_system == null || _bucket == null || _icepick == null || _scoop == null || _ctrlModel == null || _help == null || _controllerLeft == null)
+    if (_system == null || _bucket == null || _icepick == null || _scoop == null || _ctrlModel == null || _controllerLeft == null)
     {
       Debug.LogError("There are unattached variables!");
     }
@@ -29,7 +29,6 @@ public sealed class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
     _scoop.SetActive(false);
     _icepick.SetActive(false);
     _ctrlModel.SetActive(true);
-    _help.SetActive(false);
   }
 
   void Update()
@@ -86,16 +85,6 @@ public sealed class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
     }
     else
     {
-      if (_device.GetPressDown(SteamVR_Controller.ButtonMask.Grip))
-      {
-        _help.SetActive(true);
-      }
-
-      if (_device.GetPressUp(SteamVR_Controller.ButtonMask.Grip))
-      {
-        _help.SetActive(false);
-      }
-
       //トリガーを離した
       if (_device.GetTouchUp(SteamVR_Controller.ButtonMask.Trigger))
       {

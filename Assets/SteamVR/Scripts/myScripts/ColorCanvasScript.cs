@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using System;
 using UnityEngine.EventSystems;
 
-
 public class ColorCanvasScript : MonoBehaviour, InterfaceColorCanvas
 {
 
