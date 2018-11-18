@@ -45,7 +45,7 @@ public class SystemScript : MonoBehaviour
   }
 
   public void CreateGrid(Vector3 where){
-    var obj = Instantiate(_grid, new Vector3(1,1,1), Quaternion.identity);
+    var obj = Instantiate(_grid, where, Quaternion.identity);
     obj.name = "Grid";
   }
 }
