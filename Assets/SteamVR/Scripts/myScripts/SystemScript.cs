@@ -22,7 +22,7 @@
 
 2018/11/18
 ・グリッドを生成できたので、それに雪玉が触れたかで色を変化させればよい。
-*******************
+*******************/
 
 using System.Collections;
 using System.Collections.Generic;
