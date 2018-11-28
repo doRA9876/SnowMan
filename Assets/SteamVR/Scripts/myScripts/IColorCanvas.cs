@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public interface InterfaceCtrlRight : IEventSystemHandler {
-  void SwitchCanvasMode(bool isCanvasMode);
+public interface IColorCanvas : IEventSystemHandler
+{
+  void ChangeHead(int delta);
+  void ChangeValue(int delta);
 }

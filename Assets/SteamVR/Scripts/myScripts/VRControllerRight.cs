@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
-public sealed class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
+public sealed class VRControllerRight : MonoBehaviour, IVRControllerRight
 {
   private int _toolMode;
   private bool _groundTouched, _isCanvasMode;
@@ -46,7 +46,7 @@ public sealed class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
         {
           case 0:
             //When clicking on the top
-            ExecuteEvents.Execute<InterfaceColorCanvas>(
+            ExecuteEvents.Execute<IColorCanvas>(
               target: _system,
               eventData: null,
               functor: (reciever, y) => reciever.ChangeHead(1)
@@ -55,7 +55,7 @@ public sealed class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
 
           case 2:
             //When clicking on the under
-            ExecuteEvents.Execute<InterfaceColorCanvas>(
+            ExecuteEvents.Execute<IColorCanvas>(
               target: _system,
               eventData: null,
               functor: (reciever, y) => reciever.ChangeHead(-1)
@@ -64,7 +64,7 @@ public sealed class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
 
           case 1:
             //When clicking on the ringt
-            ExecuteEvents.Execute<InterfaceColorCanvas>(
+            ExecuteEvents.Execute<IColorCanvas>(
               target: _system,
               eventData: null,
               functor: (reciever, y) => reciever.ChangeValue(10)
@@ -73,7 +73,7 @@ public sealed class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
 
           case 3:
             //When clicking on the left
-            ExecuteEvents.Execute<InterfaceColorCanvas>(
+            ExecuteEvents.Execute<IColorCanvas>(
               target: _system,
               eventData: null,
               functor: (reciever, y) => reciever.ChangeValue(-10)
@@ -181,7 +181,7 @@ public sealed class VRControllerRight : MonoBehaviour, InterfaceCtrlRight
 
       case 1:
         _scoop.SetActive(true);
-        ExecuteEvents.Execute<InterfaceCtrlLeft>(
+        ExecuteEvents.Execute<IVRControllerLeft>(
           target: _controllerLeft,
           eventData: null,
           functor: (reciever, y) => reciever.ActiveScoop()

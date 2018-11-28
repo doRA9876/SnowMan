@@ -14,7 +14,7 @@ public class ColorSprayScript : MonoBehaviour {
   {
     if (collisionObj.transform.name == "SnowBall" || collisionObj.transform.name == "HardSnowBall")
     {
-      ExecuteEvents.Execute<InterfaceCtrlLeft>(
+      ExecuteEvents.Execute<IVRControllerLeft>(
         target: _controllerLeft,
         eventData: null,
         functor: (reciever, y) => reciever.ChangeColor(collisionObj.gameObject)
