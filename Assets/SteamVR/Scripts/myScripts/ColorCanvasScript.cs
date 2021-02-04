@@ -5,8 +5,7 @@ using UnityEngine.UI;
 using System;
 using UnityEngine.EventSystems;
 
-
-public class ColorCanvasScript : MonoBehaviour, InterfaceColorCanvas
+public class ColorCanvasScript : MonoBehaviour, IColorCanvas
 {
 
   private const int MAX_SLIDER_VALUE = 100;

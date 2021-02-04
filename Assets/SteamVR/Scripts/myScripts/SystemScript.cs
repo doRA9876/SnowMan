@@ -19,7 +19,10 @@
 ・SnowBallは非常に多く生成されるため、あまり複雑な処理は書かない。（特に毎フレーム処理させるOnCollision()系はご法度）
 ・よって、SnowBallには現在では処理を書かないこととする。
 ・よく考えて処理を書かないと後で後悔する。
-******************************************/
+
+2018/11/18
+・グリッドを生成できたので、それに雪玉が触れたかで色を変化させればよい。
+*******************/
 
 using System.Collections;
 using System.Collections.Generic;
@@ -28,11 +31,13 @@ using UnityEngine;
 public class SystemScript : MonoBehaviour
 {
   private GameObject _snowBall;
+  private GameObject _grid;
 
   // Use this for initialization
   void Start()
   {
     _snowBall = (GameObject)Resources.Load("Prefabs/SnowBall");
+    _grid = (GameObject)Resources.Load("Prefabs/Grid");
   }
 
   public void CreateSnowBall(Vector3 where)
@@ -40,5 +45,10 @@ public class SystemScript : MonoBehaviour
     var obj = Instantiate(_snowBall, where, Quaternion.identity);
     obj.name = "SnowBall";
     obj.GetComponent<Rigidbody>().sleepThreshold = 3;
+  }
+
+  public void CreateGrid(Vector3 where){
+    var obj = Instantiate(_grid, where, Quaternion.identity);
+    obj.name = "Grid";
   }
 }
