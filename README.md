@@ -1,8 +1,19 @@
 # SnowMan
 
+## Abstract
+
+H30年度アート&テクノロジー提出作品  
+http://www-cg.cis.iwate-u.ac.jp/AT2018/award.html
+
+VR空間内にて，雪とふれあい雪像を作成しよう！
+
 ## Description
 
-H30年度A&amp;Tの製作物のタイトル  
+雪を複数の雪玉を用いて再現しました．雪のリアルタイムシミュレーションは現在でも，その複雑さから難しいとされているため簡易的な表現となってしまいました．複数の道具を用いて，自分だけの雪像を作成してみてください．
 
-Snow Modeling from Artistic Nature  
-の略称である。
+## Requirement
+Unity 2017.2.0f3  
+VR環境(HTC VIVEを想定)  
+
+
+追記：H30年度アート&テクノロジーにて優秀賞を頂きました．
