@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
-public class VRControllerLeft : MonoBehaviour, InterfaceCtrlLeft
+public class VRControllerLeft : MonoBehaviour, IVRControllerLeft
 {
   private int _toolMode;
   private Color _drawColor;
@@ -104,20 +104,7 @@ public class VRControllerLeft : MonoBehaviour, InterfaceCtrlLeft
     }
   }
 
-  void OnTriggerEnter(Collider collisionObj)
-  {
-
-  }
-
-  void OnTriggerStay(Collider collisionObj)
-  {
-
-  }
-
-  void OnTriggerExit(Collider collisionObj)
-  {
-
-  }
+  
 
   //使用する道具を変更
   void ChangeTool(int n)
@@ -127,7 +114,7 @@ public class VRControllerLeft : MonoBehaviour, InterfaceCtrlLeft
     _scoop.SetActive(false);
     _colorSpray.SetActive(false);
     _colorCanvas.SetActive(false);
-    ExecuteEvents.Execute<InterfaceCtrlRight>(
+    ExecuteEvents.Execute<IVRControllerRight>(
       target: _controllerRight,
       eventData: null,
       functor: (reciever, y) => reciever.SwitchCanvasMode(false)
@@ -138,7 +125,7 @@ public class VRControllerLeft : MonoBehaviour, InterfaceCtrlLeft
       case 0:
         _ctrlModel.SetActive(true);
         _colorCanvas.SetActive(true);
-        ExecuteEvents.Execute<InterfaceCtrlRight>(
+        ExecuteEvents.Execute<IVRControllerRight>(
           target: _controllerRight,
           eventData: null,
           functor: (reciever, y) => reciever.SwitchCanvasMode(true)

@@ -12,7 +12,7 @@ public class SprayScript : MonoBehaviour
   {
     if (collisionObj.transform.name == "SnowBall")
     {
-      ExecuteEvents.Execute<InterfaceCtrlLeft>(
+      ExecuteEvents.Execute<IVRControllerLeft>(
         target: _controllerLeft,
         eventData: null,
         functor: (reciever, y) => reciever.MakeHard(collisionObj.gameObject)
